@@ -14,10 +14,6 @@ import io
 import os
 from pathlib import Path
 
-# Get the directory where this script is located
-SCRIPT_DIR = Path(__file__).parent
-# Define paths relative to the script directory
-WWW_DIR = SCRIPT_DIR / "www"
 
 def load_image_as_base64(image_path):
     with open(image_path, "rb") as img_file:
@@ -28,10 +24,10 @@ image3_base64 = load_image_as_base64(WWW_DIR / "sports2.jpg")
 image1_base64 = load_image_as_base64(WWW_DIR / "gene2.webp")
 image2_base64 = load_image_as_base64(WWW_DIR / "pexels-pixabay-531880.jpg")
 
+
+
+GENOME_PATHS = list_available_genome_files()  # This will be a list of paths to genome files
 #imported objects: gwas_data_path, prepare_data function and custom_css
-
-
-
 
 app_ui = ui.page_navbar(
     
@@ -484,19 +480,30 @@ ui.div(
                     
                     
                     ui.h3("3. Upload Your Genetic Data", class_="card-title"),
-                    ui.div(
-                            ui.p("Upload your genetic data file to begin the analysis", class_="upload-instruction"),
-                            ui.div({"class": "required-field"}, "* Required for analysis")
-                        ),
+                    
                     ui.input_file(
                         "user_file",
                         "",
                         button_label="Browse Files",
-                        placeholder="Drag and drop your file here",
+                        placeholder="Upload Your File Here",
                         multiple=False,
                         accept=".txt,.csv,.tsv",
                         width="100%"
                     ),
+                    
+                    ui.div(
+                    ui.p("Or choose a template genome", class_="upload-instruction"),
+                    ),
+                    ui.input_select(
+                        "sample_genome",
+                        label="Select From Existing Sample Files",
+                        choices=list(GENOME_PATHS.keys()),
+                        selected=""),
+                    
+                    ui.div(
+                            ui.div({"class": "required-field"}, "* Required for analysis")
+                        ),
+                    
                         ui.h4("Select your superpopulation", class_="card-title"),
                         ui.layout_column_wrap(
                         
@@ -1315,23 +1322,21 @@ def server(input, output, session):
     @reactive.effect
     @reactive.event(input.run_analysis)
     def run_analysis():
-        if input.consent() is False:
-            m = ui.modal(
-                "Please read and accept the terms of use to have your genetic data analyzed.",
-                title="Terms of use",
-                easy_close=True,
-                footer=None,
-            )
-            ui.modal_show(m)
-            return
         
-        if input.user_file() is None:
-            return ui.notification_show("No data uploaded yet", type="warning")
-
-        else:
+        if input.consent() is False:
+                m = ui.modal(
+                    "Please read and accept the terms of use to have your genetic data analyzed.",
+                    title="Terms of use",
+                    easy_close=True,
+                    footer=None,
+                )
+                ui.modal_show(m)
+                return
+        
+        if input.user_file() is not None:
+            
+            
             file_data = input.user_file()
-            if file_data is None:
-                return "No file uploaded yet"
             
             try:
                 first_file = file_data[0]
@@ -1340,6 +1345,29 @@ def server(input, output, session):
                 user_data.set(user_data_pandas)
             except Exception as e:
                 return ui.notification_show("An error occured analyzing the data", type = 'error')
+
+            return
+            
+        
+        elif input.sample_genome() != "":
+            file_data = input.sample_genome()
+            
+            
+            
+            try:
+                user_data_pandas = pd.read_csv(GENOME_PATHS[file_data], sep="\t", comment="#")
+                user_data_pandas.columns = ['rsid', 'chromosome', 'position', 'genotype']
+                user_data.set(user_data_pandas)
+            except Exception as e:
+                print(e)
+                return ui.notification_show (f"An error occured analyzing the data: {e}", type = 'error')
+
+            return
+
+        else:
+            return ui.notification_show("No data uploaded yet, either upload data or pick a sample genome", type="warning")
+
+            
 
         
         #render analysis_content
@@ -1815,7 +1843,7 @@ def server(input, output, session):
 
         prs_data["percentile_normalized"] = prs_data["percentile"] - 50
 
-        print(prs_data['trait'].unique())
+
 
         # Create the bar plot
         fig = px.bar(
@@ -2088,7 +2116,6 @@ def server(input, output, session):
 
         if user_data is None or trait is None:
             return
-        print("trait is",trait)
         if trait not in user_data['trait'].values:
             return
 

@@ -396,11 +396,18 @@ def list_available_genome_files():
     List all available genome files in the genomes directory.
     
     Returns:
-        list: List of genome file names
+        dict: Dictionary mapping file names to string paths
     """
     if GENOMES_DIR.exists():
-        return [f.name for f in GENOMES_DIR.glob("*.txt")]
-    return []
+        paths = [f.name for f in GENOMES_DIR.glob("*.txt")]
+        paths.append("")
+        paths.sort()
+        paths = {f: str(get_genome_file_path(f)) for f in paths if f}
+        
+        paths[''] = ''
+        return paths
+    
+    return {}
 
 def get_background_data_path(filename):
     """
