@@ -200,7 +200,7 @@ body {
 """
 
 # Use relative path for GWAS data - with environment variable override
-default_gwas_path = PROJECT_ROOT / "gwas_data_filtered_phased_low_filt.csv"
+default_gwas_path = BACKGROUND_DATA_DIR/ "gwas_data_filtered_phased_low_filt.csv"
 gwas_data_path = Path(os.environ.get('GENOMICS_GWAS_DATA', default_gwas_path))
 
 

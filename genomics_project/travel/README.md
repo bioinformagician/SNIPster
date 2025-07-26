@@ -29,7 +29,6 @@ A comprehensive web application for personal genomic analysis, providing insight
 - [Scientific Background](#scientific-background)
 - [Data Sources](#data-sources)
 - [Contributing](#contributing)
-- [License](#license)
 - [Contact](#contact)
 
 ## Installation
