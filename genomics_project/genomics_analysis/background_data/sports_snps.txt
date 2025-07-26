@@ -1,0 +1,5 @@
+SNP	chr_name	Beta	effect_allele	non_effect_allele	ensembl_alleles	Comment	power_allele	endurance_allele	gene
+rs1815739	11		T	C	C/T	This C variant of this SNP breaks the ACTN3. The T variant have been found to be associated with better sprint performance (PMID 12879365)	T		ACTN3
+rs4646994	17				I/D	ACE - this variant is found in one study to potentially distinguish between capability in power-sports vs endurance-sports (PMID 25943990). However it is also mentioned in several studies of other traits such as hypertension and alzheimers. The evidence behind it's effect remain unclear. Insertations (I) are the ones supposed to be associated with endurance, and deletions (D) with power-sports.	D	I	ACE
+rs699	1		C	T	C/T	AGT - the C allele of this SNP has been found to associate with ability in power-sports (PMID 20029521)	C		AGT
+rs1800012	17				G/T	COL1A1 - the T allele was found to be associated with protection against injuries (acute soft tissue ruptures.). PMID 19193665.	T	T	COL1A1
