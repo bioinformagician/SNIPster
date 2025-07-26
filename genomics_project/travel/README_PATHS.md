@@ -22,10 +22,10 @@ your-project-folder/
 ├── background_data/
 │   └── sports_snps.txt
 ├── genomes/
-│   ├── genome_Cajun_v5_Full_20231121192441.txt
-│   ├── genome_Frederik_FangelTolberg_v5_Full_20241117223640.txt
-│   ├── genome_Marika_Forsythe_v4_Full_20240828221950.txt
-│   └── hu278AF5_20210124151934.txt
+│   ├── genome_1.txt
+│   ├── genome_2.txt
+│   ├── genome_3.txt
+│   └── genome_4.txt
 └── gwas_data_filtered_phased_low_filt.csv
 ```
 
