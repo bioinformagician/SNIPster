@@ -1,6 +1,22 @@
 import pandas as pd
 import numpy as np
 from scipy.stats import norm
+from pathlib import Path
+import os
+
+# Get the directory where this script is located
+SCRIPT_DIR = Path(__file__).parent
+# Define paths relative to the script directory  
+PROJECT_ROOT = SCRIPT_DIR.parent
+
+# Allow environment variables to override default paths (optional)
+if 'GENOMICS_PROJECT_ROOT' in os.environ:
+    PROJECT_ROOT = Path(os.environ['GENOMICS_PROJECT_ROOT'])
+
+# Define commonly used directories
+GENOMES_DIR = Path(os.environ.get('GENOMICS_GENOMES_DIR', PROJECT_ROOT / "genomes"))
+BACKGROUND_DATA_DIR = PROJECT_ROOT / "background_data"
+WWW_DIR = SCRIPT_DIR / "www"
 
 custom_css = """
 .main-title {
@@ -183,7 +199,9 @@ body {
     }
 """
 
-gwas_data_path = r"C:\personal\genomics_project\travel\gwas_data_filtered_phased_low_filt.csv"
+# Use relative path for GWAS data - with environment variable override
+default_gwas_path = PROJECT_ROOT / "gwas_data_filtered_phased_low_filt.csv"
+gwas_data_path = Path(os.environ.get('GENOMICS_GWAS_DATA', default_gwas_path))
 
 
 def prepare_data(gwas_data_path, personal_data):
@@ -361,8 +379,40 @@ def prepare_data(gwas_data_path, personal_data):
     # Return any objects of interest
     return {"polygenomic_risk_score_data": final_data_or, "rare_snps": rare_snps, "full_data": merged_data_pruned}
 
+def get_genome_file_path(filename):
+    """
+    Get the full path to a genome file in the genomes directory.
+    
+    Args:
+        filename (str): The name of the genome file
+        
+    Returns:
+        Path: Full path to the genome file
+    """
+    return GENOMES_DIR / filename
 
+def list_available_genome_files():
+    """
+    List all available genome files in the genomes directory.
+    
+    Returns:
+        list: List of genome file names
+    """
+    if GENOMES_DIR.exists():
+        return [f.name for f in GENOMES_DIR.glob("*.txt")]
+    return []
 
+def get_background_data_path(filename):
+    """
+    Get the full path to a background data file.
+    
+    Args:
+        filename (str): The name of the background data file
+        
+    Returns:
+        Path: Full path to the background data file
+    """
+    return BACKGROUND_DATA_DIR / filename
 
 sports_df = pd.DataFrame({
     'sport': ['Running', 'Swimming', 'Power Lifting', 'Sprinting', 'Endurance'],

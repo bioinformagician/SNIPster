@@ -11,15 +11,22 @@ from IPython.display import HTML
 #from PIL import Image
 import base64
 import io
+import os
+from pathlib import Path
+
+# Get the directory where this script is located
+SCRIPT_DIR = Path(__file__).parent
+# Define paths relative to the script directory
+WWW_DIR = SCRIPT_DIR / "www"
 
 def load_image_as_base64(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode("utf-8")
 
-image4_base64 = load_image_as_base64(r"C:\personal\genomics_project\travel\web_app\www\blood5.jpg")
-image3_base64 = load_image_as_base64(r"C:\personal\genomics_project\travel\web_app\www\sports2.jpg")
-image1_base64 = load_image_as_base64(r"C:\personal\genomics_project\travel\web_app\www\gene2.webp")
-image2_base64 = load_image_as_base64(r"C:\personal\genomics_project\travel\web_app\www\pexels-pixabay-531880.jpg")
+image4_base64 = load_image_as_base64(WWW_DIR / "blood5.jpg")
+image3_base64 = load_image_as_base64(WWW_DIR / "sports2.jpg")
+image1_base64 = load_image_as_base64(WWW_DIR / "gene2.webp")
+image2_base64 = load_image_as_base64(WWW_DIR / "pexels-pixabay-531880.jpg")
 
 #imported objects: gwas_data_path, prepare_data function and custom_css
 
@@ -1954,7 +1961,7 @@ def server(input, output, session):
         
         # Load additional sports variant data
         sports_variants = pd.read_csv(
-            r"C:\personal\genomics_project\travel\background_data\sports_snps.txt",
+            get_background_data_path("sports_snps.txt"),
             sep="\t"
         )
         
