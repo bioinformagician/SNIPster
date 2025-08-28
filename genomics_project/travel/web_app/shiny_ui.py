@@ -295,11 +295,19 @@ def prepare_data(gwas_data_path, personal_data):
     merged_data["other_allele_frequency"] = 1 - merged_data["risk_allele_frequency"]
 
     # Filter rows where "-" is NOT in personal_genotype
-    merged_data_no_minus = merged_data[~merged_data['personal_genotype'].str.contains('-', na=False)]
+    merged_data_no_minus = merged_data[~merged_data['personal_genotype'].str.contains('-', na=False)].copy()
 
     #if risk_stats = 1, multiply risk_allele_frequency by other_allele_frequency, if = 0 other_allele_frequency^2, if 2 risk_allele_frequency^2
 
-    merged_data_no_minus['genotype_probability'] = np.where(merged_data_no_minus["risk_status"] == 1, merged_data_no_minus["risk_allele_frequency"] * merged_data_no_minus["other_allele_frequency"], np.where(merged_data_no_minus["risk_status"] == 0, merged_data_no_minus["other_allele_frequency"]**2, merged_data_no_minus["risk_allele_frequency"]**2))
+    merged_data_no_minus.loc[:, 'genotype_probability'] = np.where(
+        merged_data_no_minus["risk_status"] == 1, 
+        merged_data_no_minus["risk_allele_frequency"] * merged_data_no_minus["other_allele_frequency"], 
+        np.where(
+            merged_data_no_minus["risk_status"] == 0, 
+            merged_data_no_minus["other_allele_frequency"]**2, 
+            merged_data_no_minus["risk_allele_frequency"]**2
+        )
+    )
     
     #if '-' in the personal_genotype, set the genotype_probability to NA
 
@@ -339,14 +347,20 @@ def prepare_data(gwas_data_path, personal_data):
     #For the traits (where or = False, i.e something that has a unit increase or decrease), adjust unit direction
     merged_data.loc[(merged_data["or"] == False) & (merged_data["trait_direction"] == "decrease"), "odds_ratio"] *= -1
 
-    merged_data["final_risk"] = (
-        np.where(
-            merged_data["or"],  # Apply log transformation only where `or == True`
-            np.log(merged_data["odds_ratio"]),
-            merged_data["odds_ratio"]  # Use raw odds_ratio where `or == False`
-        ) * merged_data["risk_status"]
-        - merged_data["population_score"]
-    )
+    # Handle potential log of invalid values (0 or negative numbers)
+    with np.errstate(invalid='ignore', divide='ignore'):
+        merged_data["final_risk"] = (
+            np.where(
+                merged_data["or"],  # Apply log transformation only where `or == True`
+                np.where(
+                    merged_data["odds_ratio"] > 0,  # Only log positive values
+                    np.log(merged_data["odds_ratio"]),
+                    0  # Use 0 for invalid values
+                ),
+                merged_data["odds_ratio"]  # Use raw odds_ratio where `or == False`
+            ) * merged_data["risk_status"]
+            - merged_data["population_score"]
+        )
 
   
 
@@ -1808,7 +1822,13 @@ def server(input, output, session):
             
             
             try:
-                user_data_pandas = pd.read_csv(GENOME_PATHS[file_data], sep="\t", comment="#")
+                user_data_pandas = pd.read_csv(
+                    GENOME_PATHS[file_data], 
+                    sep="\t", 
+                    comment="#",
+                    low_memory=False,
+                    dtype={'rsid': 'string', 'chromosome': 'string', 'position': 'Int64', 'genotype': 'string'}
+                )
                 user_data_pandas.columns = ['rsid', 'chromosome', 'position', 'genotype']
                 user_data.set(user_data_pandas)
             except Exception as e:

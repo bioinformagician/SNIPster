@@ -14,6 +14,9 @@ shinywidgets>=0.7.0
 # Web and UI utilities
 htmltools>=0.6.0
 
+# Template engine for pandas styling
+jinja2>=3.0.0
+
 # Built-in Python modules (no installation required)
 # pathlib - Built into Python 3.4+
 # base64 - Built into Python standard library
