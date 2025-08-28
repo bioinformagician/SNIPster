@@ -1,4 +1,5 @@
 from shiny import App, render, ui, reactive
+from shiny.ui import navbar_options
 import pandas as pd
 import plotly.express as px
 import numpy as np
@@ -463,6 +464,19 @@ image3_base64 = load_image_as_base64(WWW_DIR / "sports2.jpg")
 image1_base64 = load_image_as_base64(WWW_DIR / "gene2.webp")
 image2_base64 = load_image_as_base64(WWW_DIR / "pexels-pixabay-531880.jpg")
 
+def get_image_with_validation():
+    """Return a validated background image, with fallback options"""
+    # Try to return one of the loaded images, with fallbacks
+    if image1_base64:
+        return image1_base64
+    elif image2_base64:
+        return image2_base64
+    elif image3_base64:
+        return image3_base64
+    elif image4_base64:
+        return image4_base64
+    else:
+        return None
 
 
 GENOME_PATHS = list_available_genome_files()  # This will be a list of paths to genome files
@@ -1666,7 +1680,7 @@ ui.div(
             ui.h1("Under Construction")
         )),
     title="SNPster",
-    bg="#f8f9fa"
+    navbar_options=navbar_options(bg="#f8f9fa")
 )
 
 
