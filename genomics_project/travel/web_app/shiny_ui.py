@@ -2031,11 +2031,11 @@ def server(input, output, session):
         if pie_data is None:
             return None
         
-        pie_data = pie_data[pie_data['or'] == True]
+        pie_data = pie_data[pie_data['or'] == True].copy()
 
 
         # Handle missing categories
-        pie_data["Category"] = pie_data["Category"].fillna("Unknown")
+        pie_data.loc[:, "Category"] = pie_data["Category"].fillna("Unknown")
 
         # Aggregate data
         grouped_df = (
@@ -3172,5 +3172,3 @@ def server(input, output, session):
 
 
 app = App(app_ui, server)
-
-app.run()
