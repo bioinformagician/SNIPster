@@ -695,14 +695,7 @@ ui.tags.div(
                 
                 ui.p("Explore detailed insights into your blood biomarkers."),
                 # Navigation Button
-                ui.tags.a(
-                    "Go to Blood Panel",
-                    {
-                        "class": "btn btn-primary mt-3",  # Bootstrap button styling
-                        "href": "#BloodPanel",  # Link to the Blood Panel nav ID
-                        "role": "button"
-                    }
-                )
+                
             )
         )
     ),
