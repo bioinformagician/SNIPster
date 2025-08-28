@@ -461,7 +461,7 @@ sports_df = pd.DataFrame({
 
 """ Doc string finished"""
 
-from IPython.display import HTML
+# from IPython.display import HTML  # Not needed - using ui.HTML instead
 #from PIL import Image
 import base64
 import io

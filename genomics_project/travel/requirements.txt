@@ -17,6 +17,9 @@ htmltools>=0.6.0
 # Template engine for pandas styling
 jinja2>=3.0.0
 
+# IPython for display utilities
+ipython>=8.0.0
+
 # Built-in Python modules (no installation required)
 # pathlib - Built into Python 3.4+
 # base64 - Built into Python standard library
@@ -26,4 +29,3 @@ jinja2>=3.0.0
 # Optional: Development and testing (uncomment if needed)
 # pytest>=7.0.0
 # jupyter>=1.0.0
-# ipython>=8.0.0
